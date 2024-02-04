@@ -20,18 +20,17 @@ static inline void star_new(star_t *star);
 static inline void star_update(star_t *star, float speed);
 static inline void star_show(star_t *star, PlaydateAPI *pd);
 static inline float map(float value, float start1, float stop1, float start2, float stop2);
-static inline int randomf(int value, int min, int max);
+static inline int random_range(int value, int min, int max);
 static int update(void *userdata);
 
 static star_t starfield[STARS];
 
 static inline void star_new(star_t *star)
 {
-    float z = randomf(rand(), 0, WIDTH);
-    star->x = randomf(rand(), -WIDTH, WIDTH);
-    star->y = randomf(rand(), -HEIGHT, HEIGHT);
-    star->z = z;
-    star->pz = star->pz;
+    star->x = random_range(rand(), -WIDTH, WIDTH);
+    star->y = random_range(rand(), -HEIGHT, HEIGHT);
+    star->z = rand() % WIDTH;
+    star->pz = star->z;
 }
 
 static inline void star_update(star_t *star, float speed)
@@ -40,8 +39,8 @@ static inline void star_update(star_t *star, float speed)
     if (star->z < 1.0f)
     {
         star->z = WIDTH;
-        star->x = randomf(rand(), -WIDTH, WIDTH);
-        star->y = randomf(rand(), -HEIGHT, HEIGHT);
+        star->x = random_range(rand(), -WIDTH, WIDTH);
+        star->y = random_range(rand(), -HEIGHT, HEIGHT);
         star->pz = star->z;
     }
 }
@@ -66,7 +65,7 @@ static inline float map(float value, float start1, float stop1, float start2, fl
     return start2 + (stop2 - start2) * ((value - start1) / (stop1 - start1));
 }
 
-static inline int randomf(int value, int min, int max)
+static inline int random_range(int value, int min, int max)
 {
     return value % (max - min) + min;
 }
@@ -79,6 +78,8 @@ int eventHandler(PlaydateAPI *pd, PDSystemEvent event, uint32_t arg)
         {
             star_new(&starfield[i]);
         }
+
+        srand(pd->system->getSecondsSinceEpoch(NULL));
 
         pd->display->setRefreshRate(50.0f);
         pd->system->setUpdateCallback(update, pd);
