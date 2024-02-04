@@ -27,7 +27,7 @@ static star_t starfield[STARS];
 
 static inline void star_new(star_t *star)
 {
-    int z = randomf(rand(), 0, WIDTH);
+    float z = randomf(rand(), 0, WIDTH);
     star->x = randomf(rand(), -WIDTH, WIDTH);
     star->y = randomf(rand(), -HEIGHT, HEIGHT);
     star->z = z;
@@ -92,13 +92,14 @@ static int update(void *userdata)
     PlaydateAPI *pd = userdata;
 
     pd->graphics->clear(kColorBlack);
-    pd->system->drawFPS(0, 0);
 
     for (int i = 0; i < STARS; i++)
     {
         star_update(&starfield[i], pd->system->getCrankChange());
         star_show(&starfield[i], pd);
     }
+
+    // pd->system->drawFPS(0, 0);
 
     return 1;
 }
