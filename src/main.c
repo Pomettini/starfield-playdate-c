@@ -17,7 +17,7 @@ typedef struct
 #define HEIGHT 240
 
 static inline void star_new(star_t *star);
-static inline void star_update(star_t *star, const float speed);
+static inline void star_update(star_t *star, float speed);
 static inline void star_show(star_t *star, PlaydateAPI *pd);
 static inline float map(float value, float start1, float stop1, float start2, float stop2);
 static inline int randomf(int value, int min, int max);
@@ -34,7 +34,7 @@ static inline void star_new(star_t *star)
     star->pz = star->pz;
 }
 
-static inline void star_update(star_t *star, const float speed)
+static inline void star_update(star_t *star, float speed)
 {
     star->z -= speed;
     if (star->z < 1.0f)
@@ -93,9 +93,16 @@ static int update(void *userdata)
 
     pd->graphics->clear(kColorBlack);
 
+    float crank_change = pd->system->getCrankChange();
+
+    if (crank_change < 0.0f)
+    {
+        crank_change = 0.0f;
+    }
+
     for (int i = 0; i < STARS; i++)
     {
-        star_update(&starfield[i], pd->system->getCrankChange());
+        star_update(&starfield[i], crank_change);
         star_show(&starfield[i], pd);
     }
 
